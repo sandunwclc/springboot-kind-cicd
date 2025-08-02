@@ -17,4 +17,9 @@ public class SpringbootKindCicdApplication {
 	public String home() {
 		return "Spring Boot App running on Kubernetes via Jenkins CI/CD!";
 	}
+
+	@GetMapping("/hello")
+	public String sayHi() {
+		return "sayHi";
+	}
 }

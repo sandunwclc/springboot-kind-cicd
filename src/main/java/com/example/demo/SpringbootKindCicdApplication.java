@@ -20,6 +20,6 @@ public class SpringbootKindCicdApplication {
 
 	@GetMapping("/hello")
 	public String sayHi() {
-		return "sayHi";
+		return "sayHi88888";
 	}
 }

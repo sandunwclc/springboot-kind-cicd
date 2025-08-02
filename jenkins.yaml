@@ -12,6 +12,8 @@ spec:
       labels:
         app: jenkins
     spec:
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: jenkins
           image: jenkins/jenkins:lts
@@ -19,13 +21,44 @@ spec:
             runAsUser: 0
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "2"
           volumeMounts:
             - name: docker-sock
               mountPath: /var/run/docker.sock
+            - name: docker-cli
+              mountPath: /usr/bin/docker
+              readOnly: true
+            - name: jenkins-home
+              mountPath: /var/jenkins_home
       volumes:
         - name: docker-sock
           hostPath:
             path: /var/run/docker.sock
+            type: Socket
+        - name: docker-cli
+          hostPath:
+            path: /usr/bin/docker
+            type: File
+        - name: jenkins-home
+          persistentVolumeClaim:
+            claimName: jenkins-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
 ---
 apiVersion: v1
 kind: Service
